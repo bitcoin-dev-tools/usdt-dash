@@ -1,21 +1,119 @@
 {
   pkgs,
+  config,
   ...
 }:
 {
-  imports = [ ];
+  imports = [ ./tracing/service.nix ];
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.efiInstallAsRemovable = true;
 
+  boot.kernel.sysctl."kernel.unprivileged_bpf_disabled" = 1;
+
   networking.hostName = "usdt-dash";
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
+  networking.useDHCP = false;
+  networking.interfaces.enp1s0.ipv4.addresses = [
+    {
+      address = "188.245.67.250";
+      prefixLength = 32;
+    }
   ];
-  networking.firewall.allowedUDPPorts = [ 443 ]; # QUIC
+  networking.defaultGateway = {
+    address = "172.31.1.1";
+    interface = "enp1s0";
+  };
+  networking.nameservers = [
+    "1.1.1.1"
+    "1.0.0.1"
+  ];
+  networking.firewall.allowedTCPPorts = [
+    443
+    8333
+  ];
+  networking.firewall.allowedUDPPorts = [ 443 ];
+
+  services.bitcoind.mainnet = {
+    enable = false;
+    prune = 2000;
+  };
+
+  services.prometheus = {
+    enable = true;
+    scrapeConfigs = [
+      {
+        job_name = "bitcoind";
+        static_configs = [ { targets = [ "localhost:9435" ]; } ];
+        scrape_interval = "5s";
+      }
+    ];
+  };
+
+  services.grafana = {
+    enable = true;
+    settings = {
+      server = {
+        http_addr = "127.0.0.1";
+        http_port = 3000;
+        root_url = "https://tracing.fish.foo";
+      };
+      "auth.anonymous" = {
+        enabled = true;
+        org_role = "Viewer";
+      };
+      auth.disable_login_form = true;
+      security.secret_key = "$__file{${config.sops.secrets.grafana-secret-key.path}}";
+    };
+    provision = {
+      datasources.settings.datasources = [
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://localhost:9090";
+          isDefault = true;
+        }
+      ];
+      dashboards.settings.providers = [
+        {
+          name = "default";
+          type = "file";
+          options.path = "/etc/grafana/dashboards";
+        }
+      ];
+    };
+  };
+
+  environment.etc."grafana/dashboards/bitcoind.json".source = ./grafana/dashboard.json;
+
+  sops = {
+    defaultSopsFile = ./secrets.yaml;
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secrets.caddy-cloudflare-token = { };
+    secrets.grafana-secret-key = {
+      owner = "grafana";
+    };
+    templates."caddy-env" = {
+      content = "CF_API_TOKEN=${config.sops.placeholder."caddy-cloudflare-token"}";
+    };
+  };
+
+  services.caddy = {
+    enable = true;
+    package = pkgs.caddy.withPlugins {
+      plugins = [ "github.com/caddy-dns/cloudflare@v0.2.3" ];
+      hash = "sha256-bJO2RIa6hYsoVl3y2L86EM34Dfkm2tlcEsXn2+COgzo=";
+    };
+    virtualHosts."tracing.fish.foo".extraConfig = ''
+      tls {
+        dns cloudflare {env.CF_API_TOKEN}
+      }
+      reverse_proxy localhost:3000
+    '';
+  };
+
+  systemd.services.caddy.serviceConfig.EnvironmentFile = config.sops.templates."caddy-env".path;
 
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "prohibit-password";
@@ -25,10 +123,12 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    nvim
+    neovim
     git
     htop
     curl
+    bcc
+    bpftrace
   ];
 
   time.timeZone = "UTC";

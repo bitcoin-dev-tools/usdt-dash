@@ -25,20 +25,28 @@ deploy-no-hardware-gen:
 build:
     nixos-rebuild build --flake .#{{flake_config}} --show-trace
 
-# Build and activate the new configuration on remote server
-[group('build')]
-switch:
-    nixos-rebuild switch --flake .#{{flake_config}} --target-host {{user}}@{{host}} --use-remote-sudo
+remote_dir := "/etc/nixos-config"
 
-# Build and test the new configuration on remote server (no boot default)
+# Sync config and switch on remote
 [group('build')]
-test:
-    nixos-rebuild test --flake .#{{flake_config}} --target-host {{user}}@{{host}} --use-remote-sudo
+switch: sync
+    ssh {{user}}@{{host}} 'nixos-rebuild switch --flake {{remote_dir}}#{{flake_config}}'
 
-# Build and activate, but don't add boot entry
+# Sync config and test on remote (no boot default)
 [group('build')]
-boot:
-    nixos-rebuild boot --flake .#{{flake_config}} --target-host {{user}}@{{host}} --use-remote-sudo
+test: sync
+    ssh {{user}}@{{host}} 'nixos-rebuild test --flake {{remote_dir}}#{{flake_config}}'
+
+# Sync config and set as boot default on remote
+[group('build')]
+boot: sync
+    ssh {{user}}@{{host}} 'nixos-rebuild boot --flake {{remote_dir}}#{{flake_config}}'
+
+# Rsync config to remote
+[group('build')]
+sync:
+    rsync -avz --exclude-from=.gitignore --exclude=.git -e ssh . {{user}}@{{host}}:{{remote_dir}}/
+    ssh {{user}}@{{host}} 'chown -R root:root {{remote_dir}}'
 
 # Show what would change without build
 [group('test')]
@@ -59,6 +67,11 @@ update:
 [group('check')]
 check:
     nix flake check --no-build
+
+# Generate age key on server and print public key for .sops.yaml
+[group('admin')]
+generate-sops:
+    ssh {{user}}@{{host}} 'mkdir -p /root/.config/sops/age && age-keygen -o /root/.config/sops/age/keys.txt 2>&1 | tee /dev/stderr | grep "public key" | cut -d: -f2 | tr -d " "'
 
 # SSH into the server
 [group('admin')]
