@@ -12,6 +12,12 @@
   boot.loader.grub.efiInstallAsRemovable = true;
 
   boot.kernel.sysctl."kernel.unprivileged_bpf_disabled" = 1;
+  system.modulesTree = [ config.boot.kernelPackages.kernel.dev ];
+
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   networking.hostName = "usdt-dash";
   networking.useDHCP = false;
@@ -38,6 +44,7 @@
   services.bitcoind.mainnet = {
     enable = true;
     prune = 2000;
+    extraConfig = "dbcache=1000";
   };
 
   services.prometheus = {
