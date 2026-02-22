@@ -44,7 +44,14 @@
   services.bitcoind.mainnet = {
     enable = true;
     prune = 2000;
-    extraConfig = "dbcache=1000";
+    extraConfig = ''
+      dbcache=1000
+    '';
+  };
+
+  services.tor = {
+    enable = true;
+    client.enable = true;
   };
 
   services.prometheus = {
