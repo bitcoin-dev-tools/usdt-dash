@@ -62,6 +62,26 @@
         static_configs = [ { targets = [ "localhost:9435" ]; } ];
         scrape_interval = "5s";
       }
+      {
+        job_name = "node";
+        static_configs = [ { targets = [ "localhost:9100" ]; } ];
+        scrape_interval = "15s";
+      }
+    ];
+  };
+
+  services.prometheus.exporters.node = {
+    enable = true;
+    enabledCollectors = [
+      "cpu"
+      "diskstats"
+      "filesystem"
+      "loadavg"
+      "meminfo"
+      "netdev"
+      "stat"
+      "time"
+      "vmstat"
     ];
   };
 
@@ -102,6 +122,7 @@
   };
 
   environment.etc."grafana/dashboards/bitcoind.json".source = ./grafana/dashboard.json;
+  environment.etc."grafana/dashboards/node.json".source = ./grafana/node-dashboard.json;
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
