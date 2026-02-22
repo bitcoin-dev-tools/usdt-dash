@@ -5,11 +5,13 @@
   ...
 }:
 let
-  python = pkgs.python3.withPackages (ps: [
+  bpfPython = pkgs.python3.withPackages (ps: [
     ps.bcc
     ps.prometheus-client
   ]);
-  script = ./bitcoind_exporter.py;
+  rpcPython = pkgs.python3.withPackages (ps: [
+    ps.prometheus-client
+  ]);
 in
 {
   systemd.services.bitcoind-tracing = {
@@ -31,7 +33,25 @@ in
         sleep 1
         PID=$(systemctl show --property MainPID --value bitcoind-mainnet.service)
       done
-      exec ${python}/bin/python3 ${script} "$PID"
+      exec ${bpfPython}/bin/python3 ${./bitcoind_exporter.py} "$PID"
+    '';
+  };
+
+  systemd.services.bitcoind-rpc-exporter = {
+    description = "Bitcoin Core RPC Metrics Exporter";
+    after = [ "bitcoind-mainnet.service" ];
+    bindsTo = [ "bitcoind-mainnet.service" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      User = "bitcoind-mainnet";
+      Group = "bitcoind-mainnet";
+      Restart = "on-failure";
+      RestartSec = 10;
+    };
+
+    script = ''
+      exec ${rpcPython}/bin/python3 ${./rpc_exporter.py} /var/lib/bitcoind-mainnet/.cookie
     '';
   };
 }

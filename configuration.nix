@@ -67,6 +67,11 @@
         static_configs = [ { targets = [ "localhost:9100" ]; } ];
         scrape_interval = "15s";
       }
+      {
+        job_name = "bitcoind-rpc";
+        static_configs = [ { targets = [ "localhost:9436" ]; } ];
+        scrape_interval = "15s";
+      }
     ];
   };
 
@@ -123,6 +128,7 @@
 
   environment.etc."grafana/dashboards/bitcoind.json".source = ./grafana/dashboard.json;
   environment.etc."grafana/dashboards/node.json".source = ./grafana/node-dashboard.json;
+  environment.etc."grafana/dashboards/rpc.json".source = ./grafana/rpc-dashboard.json;
 
   sops = {
     defaultSopsFile = ./secrets.yaml;
