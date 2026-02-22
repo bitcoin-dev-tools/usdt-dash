@@ -452,6 +452,65 @@
           "legendFormat": "cpus"
         }
       ]
+    },
+    {
+      "title": "OOM Kills",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 41 },
+      "id": 13,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "expr": "increase(node_vmstat_oom_kill[24h])",
+          "legendFormat": "last 24h"
+        }
+      ]
+    },
+    {
+      "title": "OOM Kills Over Time",
+      "type": "timeseries",
+      "gridPos": { "h": 4, "w": 18, "x": 6, "y": 41 },
+      "id": 14,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "pointSize": 5
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "expr": "increase(node_vmstat_oom_kill[$__rate_interval])",
+          "legendFormat": "oom kills"
+        }
+      ]
     }
   ],
   "schemaVersion": 39,
