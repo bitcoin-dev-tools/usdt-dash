@@ -36,7 +36,7 @@
   networking.firewall.allowedUDPPorts = [ 443 ];
 
   services.bitcoind.mainnet = {
-    enable = false;
+    enable = true;
     prune = 2000;
   };
 
