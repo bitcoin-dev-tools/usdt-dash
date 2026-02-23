@@ -271,7 +271,12 @@
           {
             "matcher": { "id": "byName", "options": "height" },
             "properties": [
-              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "custom.drawStyle", "value": "line" },
+              { "id": "custom.lineWidth", "value": 0 },
+              { "id": "custom.fillOpacity", "value": 0 },
+              { "id": "custom.pointSize", "value": 0 },
+              { "id": "custom.axisPlacement", "value": "hidden" },
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": false } },
               { "id": "unit", "value": "none" },
               { "id": "decimals", "value": 0 }
             ]
@@ -312,7 +317,12 @@
           {
             "matcher": { "id": "byName", "options": "height" },
             "properties": [
-              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "custom.drawStyle", "value": "line" },
+              { "id": "custom.lineWidth", "value": 0 },
+              { "id": "custom.fillOpacity", "value": 0 },
+              { "id": "custom.pointSize", "value": 0 },
+              { "id": "custom.axisPlacement", "value": "hidden" },
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": false } },
               { "id": "unit", "value": "none" },
               { "id": "decimals", "value": 0 }
             ]
@@ -353,7 +363,12 @@
           {
             "matcher": { "id": "byName", "options": "height" },
             "properties": [
-              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "custom.drawStyle", "value": "line" },
+              { "id": "custom.lineWidth", "value": 0 },
+              { "id": "custom.fillOpacity", "value": 0 },
+              { "id": "custom.pointSize", "value": 0 },
+              { "id": "custom.axisPlacement", "value": "hidden" },
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": false } },
               { "id": "unit", "value": "none" },
               { "id": "decimals", "value": 0 }
             ]
@@ -394,7 +409,12 @@
           {
             "matcher": { "id": "byName", "options": "height" },
             "properties": [
-              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "custom.drawStyle", "value": "line" },
+              { "id": "custom.lineWidth", "value": 0 },
+              { "id": "custom.fillOpacity", "value": 0 },
+              { "id": "custom.pointSize", "value": 0 },
+              { "id": "custom.axisPlacement", "value": "hidden" },
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": false } },
               { "id": "unit", "value": "none" },
               { "id": "decimals", "value": 0 }
             ]
