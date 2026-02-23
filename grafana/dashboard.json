@@ -267,16 +267,29 @@
             "pointSize": 5
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "height" },
+            "properties": [
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "unit", "value": "none" },
+              { "id": "decimals", "value": 0 }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "multi" }
       },
       "targets": [
         {
           "expr": "bitcoind_block_connected_seconds",
-          "legendFormat": "height {{height}}"
+          "legendFormat": "connection time"
+        },
+        {
+          "expr": "bitcoind_block_height",
+          "legendFormat": "height"
         }
       ]
     },
@@ -295,16 +308,29 @@
             "pointSize": 5
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "height" },
+            "properties": [
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "unit", "value": "none" },
+              { "id": "decimals", "value": 0 }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "multi" }
       },
       "targets": [
         {
           "expr": "bitcoind_block_transactions",
-          "legendFormat": "height {{height}}"
+          "legendFormat": "transactions"
+        },
+        {
+          "expr": "bitcoind_block_height",
+          "legendFormat": "height"
         }
       ]
     },
@@ -323,16 +349,29 @@
             "pointSize": 5
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "height" },
+            "properties": [
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "unit", "value": "none" },
+              { "id": "decimals", "value": 0 }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "multi" }
       },
       "targets": [
         {
           "expr": "bitcoind_block_sigops",
-          "legendFormat": "height {{height}}"
+          "legendFormat": "sigops"
+        },
+        {
+          "expr": "bitcoind_block_height",
+          "legendFormat": "height"
         }
       ]
     },
@@ -351,16 +390,29 @@
             "pointSize": 5
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "height" },
+            "properties": [
+              { "id": "custom.hideFrom", "value": { "legend": true, "tooltip": false, "viz": true } },
+              { "id": "unit", "value": "none" },
+              { "id": "decimals", "value": 0 }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "multi" }
       },
       "targets": [
         {
           "expr": "bitcoind_block_inputs",
-          "legendFormat": "height {{height}}"
+          "legendFormat": "inputs"
+        },
+        {
+          "expr": "bitcoind_block_height",
+          "legendFormat": "height"
         }
       ]
     },

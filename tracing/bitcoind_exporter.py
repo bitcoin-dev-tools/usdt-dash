@@ -256,10 +256,10 @@ CONN_EVICTED = Counter("bitcoind_connections_evicted_total", "Inbound connection
 CONN_MISBEHAVING = Counter("bitcoind_connections_misbehaving_total", "Misbehaving connections")
 
 BLOCK_HEIGHT = Gauge("bitcoind_block_height", "Latest connected block height")
-BLOCK_CONNECTED_SECS = Gauge("bitcoind_block_connected_seconds", "Block connection duration", ["height"])
-BLOCK_TXS = Gauge("bitcoind_block_transactions", "Transactions in connected block", ["height"])
-BLOCK_SIGOPS = Gauge("bitcoind_block_sigops", "Sigops in connected block", ["height"])
-BLOCK_INPUTS = Gauge("bitcoind_block_inputs", "Inputs in connected block", ["height"])
+BLOCK_CONNECTED_SECS = Gauge("bitcoind_block_connected_seconds", "Last block connection duration")
+BLOCK_TXS = Gauge("bitcoind_block_transactions", "Transactions in last connected block")
+BLOCK_SIGOPS = Gauge("bitcoind_block_sigops", "Sigops in last connected block")
+BLOCK_INPUTS = Gauge("bitcoind_block_inputs", "Inputs in last connected block")
 
 UTXO_FLUSH_DURATION = Summary(
     "bitcoind_utxocache_flush_duration_seconds", "UTXO cache flush duration"
@@ -351,21 +351,13 @@ def main(pid, port=9435):
         evt = bpf["net_closed_conn_events"].event(data)
         CONN_CLOSED.labels(network=network_name(evt.network)).inc()
 
-    prev_block_height = [None]
-
     def handle_block_connected(cpu, data, size):
         evt = bpf["block_connected_events"].event(data)
-        height = str(evt.height)
-        prev = prev_block_height[0]
-        if prev is not None and prev != height:
-            for m in (BLOCK_CONNECTED_SECS, BLOCK_TXS, BLOCK_SIGOPS, BLOCK_INPUTS):
-                m.remove(prev)
-        prev_block_height[0] = height
         BLOCK_HEIGHT.set(evt.height)
-        BLOCK_CONNECTED_SECS.labels(height).set(evt.duration_ns / 1e9)
-        BLOCK_TXS.labels(height).set(evt.tx_count)
-        BLOCK_SIGOPS.labels(height).set(evt.sigops)
-        BLOCK_INPUTS.labels(height).set(evt.inputs)
+        BLOCK_CONNECTED_SECS.set(evt.duration_ns / 1e9)
+        BLOCK_TXS.set(evt.tx_count)
+        BLOCK_SIGOPS.set(evt.sigops)
+        BLOCK_INPUTS.set(evt.inputs)
 
     def handle_utxocache_flush(cpu, data, size):
         evt = bpf["utxocache_flush_events"].event(data)
