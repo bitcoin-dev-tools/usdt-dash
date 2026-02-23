@@ -45,7 +45,7 @@ boot: sync
 # Rsync config to remote
 [group('build')]
 sync:
-    rsync -avz --exclude-from=.gitignore --exclude=.git -e ssh . {{user}}@{{host}}:{{remote_dir}}/
+    git ls-files -z | rsync -avz --files-from=- --from0 -e ssh . {{user}}@{{host}}:{{remote_dir}}/
     ssh {{user}}@{{host}} 'chown -R root:root {{remote_dir}}'
 
 # Show what would change without build
