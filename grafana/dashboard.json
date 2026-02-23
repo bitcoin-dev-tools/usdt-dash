@@ -175,11 +175,11 @@
         },
         "overrides": [
           {
-            "matcher": { "id": "byName", "options": "inbound" },
+            "matcher": { "id": "byName", "options": "inbound (recv)" },
             "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } }]
           },
           {
-            "matcher": { "id": "byName", "options": "outbound" },
+            "matcher": { "id": "byName", "options": "outbound (send)" },
             "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
           }
         ]
@@ -190,8 +190,12 @@
       },
       "targets": [
         {
-          "expr": "sum by (direction) (rate(bitcoind_p2p_bytes_total[$__rate_interval]))",
-          "legendFormat": "{{direction}}"
+          "expr": "sum(rate(bitcoind_p2p_bytes_total{direction=\"inbound\"}[$__rate_interval]))",
+          "legendFormat": "inbound (recv)"
+        },
+        {
+          "expr": "sum(rate(bitcoind_p2p_bytes_total{direction=\"outbound\"}[$__rate_interval]))",
+          "legendFormat": "outbound (send)"
         }
       ]
     },
