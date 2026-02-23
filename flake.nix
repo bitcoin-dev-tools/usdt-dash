@@ -19,10 +19,22 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+      settings = {
+        hostName = "usdt-dash";
+        domain = "tracing.fish.foo";
+        networkInterface = "enp1s0";
+        ipAddress = "188.245.67.250";
+        prefixLength = 32;
+        gateway = "172.31.1.1";
+        sshKeys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH988C5DbEPHfoCphoW23MWq9M6fmA4UTXREiZU0J7n0 will.hetzner@temp.com"
+        ];
+      };
     in
     {
       nixosConfigurations.default = nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = { inherit settings; };
         modules = [
           disko.nixosModules.disko
           sops-nix.nixosModules.sops

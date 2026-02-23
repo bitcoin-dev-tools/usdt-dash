@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  settings,
   ...
 }:
 {
@@ -19,17 +20,17 @@
     "flakes"
   ];
 
-  networking.hostName = "usdt-dash";
+  networking.hostName = settings.hostName;
   networking.useDHCP = false;
-  networking.interfaces.enp1s0.ipv4.addresses = [
+  networking.interfaces.${settings.networkInterface}.ipv4.addresses = [
     {
-      address = "188.245.67.250";
-      prefixLength = 32;
+      address = settings.ipAddress;
+      prefixLength = settings.prefixLength;
     }
   ];
   networking.defaultGateway = {
-    address = "172.31.1.1";
-    interface = "enp1s0";
+    address = settings.gateway;
+    interface = settings.networkInterface;
   };
   networking.nameservers = [
     "1.1.1.1"
@@ -96,7 +97,7 @@
       server = {
         http_addr = "127.0.0.1";
         http_port = 3000;
-        root_url = "https://tracing.fish.foo";
+        root_url = "https://${settings.domain}";
         serve_from_sub_path = false;
       };
       dashboards.default_home_dashboard_path = "/etc/grafana/dashboards/bitcoind.json";
@@ -148,7 +149,7 @@
       plugins = [ "github.com/caddy-dns/cloudflare@v0.2.3" ];
       hash = "sha256-bJO2RIa6hYsoVl3y2L86EM34Dfkm2tlcEsXn2+COgzo=";
     };
-    virtualHosts."tracing.fish.foo".extraConfig = ''
+    virtualHosts.${settings.domain}.extraConfig = ''
       tls {
         dns cloudflare {env.CF_API_TOKEN}
       }
@@ -161,9 +162,7 @@
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "prohibit-password";
 
-  users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH988C5DbEPHfoCphoW23MWq9M6fmA4UTXREiZU0J7n0 will.hetzner@temp.com"
-  ];
+  users.users.root.openssh.authorizedKeys.keys = settings.sshKeys;
 
   environment.systemPackages = with pkgs; [
     neovim
