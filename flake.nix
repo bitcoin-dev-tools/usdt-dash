@@ -17,8 +17,11 @@
       ...
     }:
     let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      forAllSystems = nixpkgs.lib.genAttrs systems;
       settings = {
         hostName = "usdt-dash";
         domain = "tracing.fish.foo";
@@ -33,7 +36,7 @@
     in
     {
       nixosConfigurations.default = nixpkgs.lib.nixosSystem {
-        inherit system;
+        system = "x86_64-linux";
         specialArgs = { inherit settings; };
         modules = [
           disko.nixosModules.disko
@@ -44,17 +47,19 @@
         ];
       };
 
-      devShells.${system}.default = pkgs.mkShell {
-        packages = with pkgs; [
-          just
-          sops
-          age
-          ssh-to-age
-          nixos-anywhere
-          nixfmt-tree
-        ];
-      };
+      devShells = forAllSystems (system: {
+        default = nixpkgs.legacyPackages.${system}.mkShell {
+          packages = with nixpkgs.legacyPackages.${system}; [
+            just
+            sops
+            age
+            ssh-to-age
+            nixos-anywhere
+            nixfmt-tree
+          ];
+        };
+      });
 
-      formatter.${system} = pkgs.nixfmt-tree;
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
     };
 }
