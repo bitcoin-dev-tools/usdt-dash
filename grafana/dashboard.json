@@ -75,6 +75,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "sat/vB",
+          "color": { "mode": "fixed", "fixedColor": "yellow" },
           "custom": {
             "drawStyle": "line",
             "lineInterpolation": "smooth",
@@ -172,7 +173,16 @@
             "fillOpacity": 10
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "inbound" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "outbound" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+          }
+        ]
       },
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
@@ -200,7 +210,16 @@
             "fillOpacity": 20
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "inbound" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "outbound" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+          }
+        ]
       },
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
@@ -261,6 +280,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "s",
+          "color": { "mode": "fixed", "fixedColor": "blue" },
           "custom": {
             "drawStyle": "bars",
             "fillOpacity": 60,
@@ -307,6 +327,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "purple" },
           "custom": {
             "drawStyle": "bars",
             "fillOpacity": 60,
@@ -353,6 +374,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "orange" },
           "custom": {
             "drawStyle": "bars",
             "fillOpacity": 60,
@@ -399,6 +421,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "cyan" },
           "custom": {
             "drawStyle": "bars",
             "fillOpacity": 60,
@@ -484,6 +507,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "s",
+          "color": { "mode": "fixed", "fixedColor": "red" },
           "custom": {
             "drawStyle": "bars",
             "fillOpacity": 60,
@@ -512,6 +536,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "purple" },
           "custom": {
             "drawStyle": "line",
             "lineInterpolation": "stepAfter",
@@ -540,6 +565,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "bytes",
+          "color": { "mode": "fixed", "fixedColor": "blue" },
           "custom": {
             "drawStyle": "line",
             "lineInterpolation": "stepAfter",
