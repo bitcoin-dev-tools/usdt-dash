@@ -44,6 +44,17 @@
         ];
       };
 
+      devShells.${system}.default = pkgs.mkShell {
+        packages = with pkgs; [
+          just
+          sops
+          age
+          ssh-to-age
+          nixos-anywhere
+          nixfmt-tree
+        ];
+      };
+
       formatter.${system} = pkgs.nixfmt-tree;
     };
 }
